@@ -12,16 +12,21 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [signin, { isLoading }] = useSignUpMutation();
+  const [signUp, { isLoading }] = useSignUpMutation();
 
   // functon to submit the form
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("object");
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords don't match");
+      return; // Stop form submission if passwords don't match
+    }
+
     try {
-      if (password !== confirmPassword) {
-        toast.error("Password dont match");
-      }
-      await signin({ userName, email, password }).unwrap();
+      await signUp({ userName, email, password }).unwrap();
+      toast.success("User created successfully");
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
