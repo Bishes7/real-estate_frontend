@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import FormContainer from "../components/FormContainer";
 import { Button, Card } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSignUpMutation } from "../slices/usersApiSlice";
 import { toast } from "react-toastify";
+import { Loader } from "../components/ui/Loader";
 
 const Signup = () => {
   const [userName, setUserName] = useState("");
@@ -14,10 +15,11 @@ const Signup = () => {
 
   const [signUp, { isLoading }] = useSignUpMutation();
 
+  const navigate = useNavigate();
+
   // functon to submit the form
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("object");
 
     if (password !== confirmPassword) {
       toast.error("Passwords don't match");
@@ -27,6 +29,7 @@ const Signup = () => {
     try {
       await signUp({ userName, email, password }).unwrap();
       toast.success("User created successfully");
+      navigate("/login");
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
@@ -87,6 +90,7 @@ const Signup = () => {
           >
             Sign up
           </Button>
+          {isLoading && <Loader />}
         </Form>
         <div className="d-flex gap-1">
           <p>Have an account?</p>
