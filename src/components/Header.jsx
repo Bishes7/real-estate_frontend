@@ -6,11 +6,26 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Nav from "react-bootstrap/Nav";
 
 import Navbar from "react-bootstrap/Navbar";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import img from "../assets/bishes.JPG";
+import { useLogoutMutation } from "../slices/usersApiSlice";
+import { logout } from "../slices/authSlice";
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [logOutApi] = useLogoutMutation();
+  const handleLogOut = async () => {
+    try {
+      await logOutApi().unwrap();
+      dispatch(logout());
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const { userInfo } = useSelector((state) => state.auth);
   return (
     <Navbar expand="md" bg="secondary-subtle" className="shadow-lg  p-2">
@@ -36,32 +51,39 @@ const Header = () => {
             </InputGroup>
           </Form>
           <Nav className="fw-bold gap-2 ms-auto ">
-            <Nav.Link as={Link} to="/home">
+            <Nav.Link as={Link} to="/">
               Home
-            </Nav.Link>
-            <Nav.Link as={Link} to="/about">
-              About
-            </Nav.Link>
-            <Nav.Link as={Link} to="/login">
-              Login
             </Nav.Link>
 
             {userInfo ? (
-              <Nav.Link as={Link} to="/profile">
-                <img
-                  src={img}
-                  alt="profile"
-                  className="rounded-circle"
-                  style={{
-                    width: 20,
-                    height: 20,
-                    objectFit: "cover",
-                    marginLeft: "7px",
-                  }}
-                />
-              </Nav.Link>
+              <>
+                <Nav.Link as={Link} to="/login" onClick={handleLogOut}>
+                  Logout
+                </Nav.Link>
+
+                <Nav.Link as={Link} to="/profile">
+                  <img
+                    src={img}
+                    alt="profile"
+                    className="rounded-circle"
+                    style={{
+                      width: 20,
+                      height: 20,
+                      objectFit: "cover",
+                      marginLeft: "7px",
+                    }}
+                  />
+                </Nav.Link>
+              </>
             ) : (
-              <Nav.Link as={Link} to="/login"></Nav.Link>
+              <>
+                <Nav.Link as={Link} to="/about">
+                  About
+                </Nav.Link>
+                <Nav.Link as={Link} to="/login">
+                  Login
+                </Nav.Link>
+              </>
             )}
           </Nav>
         </Navbar.Collapse>
