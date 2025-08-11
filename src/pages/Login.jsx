@@ -6,6 +6,7 @@ import { Loader } from "../components/ui/Loader";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { setCredentials } from "../slices/authSlice";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,12 +16,14 @@ const Login = () => {
 
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await login({ email, password }).unwrap();
       toast.success("Login Successfully");
-      setCredentials({ ...res });
+      dispatch(setCredentials({ ...res }));
       navigate("/");
     } catch (err) {
       toast.error(err?.data?.message || err.error);

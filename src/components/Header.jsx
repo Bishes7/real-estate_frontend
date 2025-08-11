@@ -7,10 +7,13 @@ import Nav from "react-bootstrap/Nav";
 
 import Navbar from "react-bootstrap/Navbar";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import img from "../assets/bishes.JPG";
 
 const Header = () => {
+  const { userInfo } = useSelector((state) => state.auth);
   return (
-    <Navbar expand="md" bg="secondary-subtle" className="shadow-md  p-2">
+    <Navbar expand="md" bg="secondary-subtle" className="shadow-lg  p-2">
       <Container>
         <Navbar.Brand className="fw-bold ">
           <span className="text-secondary">Real</span>
@@ -32,7 +35,7 @@ const Header = () => {
               </InputGroup.Text>
             </InputGroup>
           </Form>
-          <Nav className="fw-bold gap-2 ">
+          <Nav className="fw-bold gap-2 ms-auto ">
             <Nav.Link as={Link} to="/home">
               Home
             </Nav.Link>
@@ -42,6 +45,24 @@ const Header = () => {
             <Nav.Link as={Link} to="/login">
               Login
             </Nav.Link>
+
+            {userInfo ? (
+              <Nav.Link as={Link} to="/profile">
+                <img
+                  src={img}
+                  alt="profile"
+                  className="rounded-circle"
+                  style={{
+                    width: 20,
+                    height: 20,
+                    objectFit: "cover",
+                    marginLeft: "7px",
+                  }}
+                />
+              </Nav.Link>
+            ) : (
+              <Nav.Link as={Link} to="/login"></Nav.Link>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>
