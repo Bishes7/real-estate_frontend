@@ -37,16 +37,16 @@ const Signup = () => {
 
   return (
     <FormContainer>
-      <Card className="mt-4 p-3 rounded ">
-        <h1 className="text-center fw-bold my-2">Sign Up</h1>
-        <Form className="p-3" onSubmit={handleSubmit}>
+      <Card className="mt-4 p-1 rounded ">
+        <h3 className="text-center fw-bold my-2">Sign Up</h3>
+        <Form className="p-3 " onSubmit={handleSubmit}>
           <Form.Group controlId="username" className="my-3">
             <Form.Label>User Name</Form.Label>
             <Form.Control
               name="username"
               type="text"
               placeholder="Enter a username"
-              autoComplete="new-password"
+              autoComplete="off"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
             />
