@@ -1,25 +1,50 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Loader } from "../components/ui/Loader";
 import FormContainer from "../components/FormContainer";
 import { Button, Card, Form } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useUpdateProfileMutation } from "../slices/usersApiSlice";
+import { toast } from "react-toastify";
+import { setCredentials } from "../slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const { userInfo } = useSelector((state) => state.auth);
-  console.log(userInfo);
+
+  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      toast.error("Password dont match");
+    } else {
+      try {
+        const res = await updateProfile({
+          userName,
+          email,
+          password,
+        }).unwrap();
+        dispatch(setCredentials(res));
+        toast.success("Profile Updated successfully");
+        navigate("/");
+      } catch (err) {
+        toast.error(err?.data?.message || err.error);
+      }
+    }
   };
 
   return (
     <div>
       <h4 className="fw-bold my-3 text-center">
-        Welcome back {userInfo.user.userName} !{" "}
+        Welcome back {userInfo?.user?.userName} !{" "}
       </h4>
       <FormContainer>
         <Card className="my-4">
@@ -56,15 +81,26 @@ const Profile = () => {
               />
             </Form.Group>
 
+            <Form.Group controlId="confirmPassword" className="my-3">
+              <Form.Label>Confirm Password</Form.Label>
+              <Form.Control
+                name="confirmPassword"
+                type="password"
+                autoComplete="off"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </Form.Group>
+
             <Button
               variant="secondary"
               type="submit"
               className="w-100"
-              // disabled={isLoading}
+              disabled={isLoading}
             >
               Update Details
             </Button>
-            {/* {isLoading && <Loader />} */}
+            {isLoading && <Loader />}
           </Form>
         </Card>
         <div>
