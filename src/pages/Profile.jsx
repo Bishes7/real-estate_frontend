@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useUpdateProfileMutation } from "../slices/usersApiSlice";
 import { toast } from "react-toastify";
 import { setCredentials } from "../slices/authSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [userName, setUserName] = useState("");
@@ -100,6 +100,12 @@ const Profile = () => {
             >
               Update Details
             </Button>
+
+            <Link to="/create-listing">
+              <Button variant="success" className="w-100 my-3 ">
+                Create Listing
+              </Button>
+            </Link>
             {isLoading && <Loader />}
           </Form>
         </Card>
