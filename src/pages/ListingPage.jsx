@@ -1,55 +1,98 @@
 import React, { useState } from "react";
-import { Button, Col, Form, Row, Image } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import FormContainer from "../components/FormContainer";
-import { useUploadImageMutation } from "../slices/usersApiSlice";
-import { Loader } from "../components/ui/Loader";
 import { toast } from "react-toastify";
+import { useUploadImageMutation } from "../slices/usersApiSlice";
+import { useSelector } from "react-redux";
 
 const ListingPage = () => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [address, setAddress] = useState("");
-  const [images, setImages] = useState([]); // [{file, preview}]
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    address: "",
+    sell: false,
+    rent: false,
+    parking: false,
+    furnished: false,
+    offer: false,
+    beds: 1,
+    baths: 1,
+    regularPrice: 0,
+    discountedPrice: 0,
+    images: [],
+  });
 
   const [upload, { isLoading }] = useUploadImageMutation();
 
+  const { userInfo } = useSelector((state) => state.auth);
+
+  // one function for all inputs
+  const handleChange = (e) => {
+    const { id, type, value, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  // handle image selection
   const handleImageChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-
-    if (images.length + selectedFiles.length > 6) {
-      toast.error("You can only upload 6 images per listing");
-      return;
-    }
-
-    const newImages = selectedFiles.map((file) => ({
+    const files = Array.from(e.target.files);
+    const newImages = files.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
     }));
-
-    setImages((prev) => [...prev, ...newImages]);
+    setFormData((prev) => ({
+      ...prev,
+      images: [...prev.images, ...newImages],
+    }));
   };
 
+  // delete an image
   const handleDeleteImage = (index) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
+    setFormData((prev) => {
+      const updated = [...prev.images];
+      updated.splice(index, 1);
+      return { ...prev, images: updated };
+    });
   };
 
-  const handleUpload = async () => {
-    if (images.length === 0) {
-      toast.error("Please select at least one image");
-      return;
-    }
+  // submit all data
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const submitData = new FormData();
 
-    const formData = new FormData();
-    images.forEach((img) => formData.append("images", img.file));
+    // append non-image fields
+    Object.keys(formData).forEach((key) => {
+      if (key !== "images") submitData.append(key, formData[key]);
+    });
+
+    // append images
+    formData.images.forEach((img) => {
+      submitData.append("images", img.file);
+    });
 
     try {
-      const { data } = await upload(formData);
+      const { data } = upload(submitData);
 
-      toast.success("Image uploaded successfully");
-      setImages([]);
+      toast.success("Listing created successfully!");
+      setFormData({
+        name: "",
+        description: "",
+        address: "",
+        sell: false,
+        rent: false,
+        parking: false,
+        furnished: false,
+        offer: false,
+        beds: 1,
+        baths: 1,
+        regularPrice: 0,
+        discountedPrice: 0,
+        images: [],
+      });
     } catch (err) {
-      console.log(err?.data?.message || err.error);
-      toast.error("Image upload failed");
+      toast.error("Error creating listing");
     }
   };
 
@@ -57,80 +100,108 @@ const ListingPage = () => {
     <main className="p-3">
       <h3 className="fw-bold text-center my-3">Create a Listing</h3>
       <FormContainer>
-        <Row>
-          <Col md={6}>
-            <Form>
-              <Form.Group controlId="name" className="my-2">
+        <Form onSubmit={handleSubmit}>
+          <Row>
+            {/* Left side */}
+            <Col md={6}>
+              <Form.Group className="my-2">
                 <Form.Label>Name</Form.Label>
                 <Form.Control
+                  id="name"
                   type="text"
+                  value={formData.name}
+                  onChange={handleChange}
                   required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
                 />
               </Form.Group>
-              <Form.Group controlId="description" className="my-2">
+
+              <Form.Group className="my-2">
                 <Form.Label>Description</Form.Label>
                 <Form.Control
+                  id="description"
                   as="textarea"
-                  rows={3}
+                  value={formData.description}
+                  onChange={handleChange}
                   required
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
                 />
               </Form.Group>
-              <Form.Group controlId="address" className="my-2">
+
+              <Form.Group className="my-2">
                 <Form.Label>Address</Form.Label>
                 <Form.Control
+                  id="address"
                   type="text"
+                  value={formData.address}
+                  onChange={handleChange}
                   required
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
                 />
               </Form.Group>
 
               <Row className="my-3">
                 <Col xs={6} md={3}>
-                  <Form.Check type="checkbox" label="Sell" id="sell" />
-                </Col>
-                <Col xs={6} md={3}>
-                  <Form.Check type="checkbox" label="Rent" id="rent" />
-                </Col>
-                <Col xs={6} md={3}>
-                  <Form.Check type="checkbox" label="Parking" id="parking" />
+                  <Form.Check
+                    id="sell"
+                    type="checkbox"
+                    label="Sell"
+                    checked={formData.sell}
+                    onChange={handleChange}
+                  />
                 </Col>
                 <Col xs={6} md={3}>
                   <Form.Check
+                    id="rent"
+                    type="checkbox"
+                    label="Rent"
+                    checked={formData.rent}
+                    onChange={handleChange}
+                  />
+                </Col>
+                <Col xs={6} md={3}>
+                  <Form.Check
+                    id="parking"
+                    type="checkbox"
+                    label="Parking"
+                    checked={formData.parking}
+                    onChange={handleChange}
+                  />
+                </Col>
+                <Col xs={6} md={3}>
+                  <Form.Check
+                    id="furnished"
                     type="checkbox"
                     label="Furnished"
-                    id="furnished"
+                    checked={formData.furnished}
+                    onChange={handleChange}
                   />
                 </Col>
               </Row>
 
               <Form.Check
+                id="offer"
                 type="checkbox"
                 label="Offer"
-                className="mb-3"
-                id="offer"
+                checked={formData.offer}
+                onChange={handleChange}
               />
 
               <Row className="mb-3">
                 <Col>
                   <Form.Control
+                    id="beds"
                     type="number"
                     min="1"
-                    defaultValue="1"
-                    id="beds"
+                    value={formData.beds}
+                    onChange={handleChange}
                   />
                   <Form.Text>Beds</Form.Text>
                 </Col>
                 <Col>
                   <Form.Control
+                    id="baths"
                     type="number"
                     min="1"
-                    defaultValue="1"
-                    id="baths"
+                    value={formData.baths}
+                    onChange={handleChange}
                   />
                   <Form.Text>Baths</Form.Text>
                 </Col>
@@ -138,74 +209,67 @@ const ListingPage = () => {
 
               <Form.Group className="mb-3">
                 <Form.Control
+                  id="regularPrice"
                   type="number"
                   min="0"
-                  defaultValue="0"
-                  id="regularprice"
+                  value={formData.regularPrice}
+                  onChange={handleChange}
                 />
                 <Form.Text>Regular price ($ / Month)</Form.Text>
                 <Form.Control
+                  id="discountedPrice"
                   type="number"
                   min="0"
-                  defaultValue="0"
-                  id="discountedprice"
+                  value={formData.discountedPrice}
+                  onChange={handleChange}
                 />
                 <Form.Text>Discounted price ($ / Month)</Form.Text>
               </Form.Group>
-            </Form>
-          </Col>
+            </Col>
 
-          <Col md={6}>
-            <Form.Group controlId="images" className="mb-3">
-              <Form.Label>
-                Images: <small>The first image will be cover (max 6)</small>
-              </Form.Label>
-              <Form.Control
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-            </Form.Group>
+            {/* Right side */}
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>
+                  Images: <small>The first image will be cover</small>
+                </Form.Label>
+                <Form.Control
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </Form.Group>
 
-            {/* Preview Section */}
-            {images.length > 0 && (
-              <div>
-                {images.map((img, index) => (
-                  <div
-                    key={index}
-                    className="d-flex align-items-center justify-content-between mb-2"
-                  >
-                    <Image
-                      src={img.preview}
-                      thumbnail
-                      width={100}
-                      height={70}
-                    />
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleDeleteImage(index)}
-                    >
-                      DELETE
-                    </Button>
-                  </div>
+              {/* Preview images */}
+              <Row>
+                {formData.images.map((img, index) => (
+                  <Col key={index} xs={6} className="mb-3">
+                    <div className="position-relative">
+                      <img
+                        src={img.preview}
+                        alt="preview"
+                        className="img-fluid rounded"
+                      />
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        className="position-absolute top-0 end-0"
+                        onClick={() => handleDeleteImage(index)}
+                      >
+                        X
+                      </Button>
+                    </div>
+                  </Col>
                 ))}
-              </div>
-            )}
+              </Row>
 
-            <Button
-              type="button"
-              className="btn btn-secondary w-100 mt-3"
-              onClick={handleUpload}
-              disabled={isLoading}
-            >
-              {isLoading ? "Uploading..." : "UPLOAD"}
-            </Button>
-            <Button className="w-100 my-3">Create Listing</Button>
-            {isLoading && <Loader />}
-          </Col>
-        </Row>
+              <Button type="submit" className="btn btn-primary w-100">
+                Create Listing
+              </Button>
+            </Col>
+          </Row>
+        </Form>
       </FormContainer>
     </main>
   );
