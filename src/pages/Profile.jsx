@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { setCredentials } from "../slices/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/constants";
+import { useDeleteListingMutation } from "../slices/listingsApiSlice";
 
 const Profile = () => {
   const [userName, setUserName] = useState("");
@@ -21,6 +22,9 @@ const Profile = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
+
+  const [deleteListing, { isLoading: listingDelete, error }] =
+    useDeleteListingMutation();
 
   const {
     data: userListings,
@@ -65,6 +69,17 @@ const Profile = () => {
     refetch();
   };
 
+  // delete listing
+
+  const handleListingDelete = async (listingId) => {
+    try {
+      await deleteListing(listingId).unwrap();
+      toast.success("Listing deleted");
+      refetch();
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
+  };
   return (
     <div>
       <h4 className="fw-bold my-3 text-center">
@@ -160,14 +175,17 @@ const Profile = () => {
                     src={`${BASE_URL}${listing.images[0]}`}
                     alt="listingimage"
                     className=" object-contain rounded  "
-                    style={{ width: "200px", height: "150px" }}
+                    style={{ width: "120px", height: "80px" }}
                   />
                 </Link>
                 <Link to={`/listing/${listing._id}`} className="fw-bold">
                   {listing.name}
                 </Link>
                 <div className="d-flex flex-column">
-                  <button className="btn btn-sm fw-bold text-danger ">
+                  <button
+                    className="btn btn-sm fw-bold text-danger "
+                    onClick={() => handleListingDelete(listing._id)}
+                  >
                     Delete
                   </button>
                   <button className="btn btn-sm fw-bold text-success ">

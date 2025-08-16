@@ -41,6 +41,12 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+
+    userListings: builder.query({
+      query: (userId) => ({
+        url: `${USERS_URL}/listing/${userId}`,
+      }),
+    }),
   }),
 });
 
@@ -50,4 +56,5 @@ export const {
   useLogoutMutation,
   useUpdateProfileMutation,
   useUploadImageMutation,
+  useUserListingsQuery,
 } = usersApiSlice;
