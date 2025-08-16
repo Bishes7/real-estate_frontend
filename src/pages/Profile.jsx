@@ -1,12 +1,16 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Loader } from "../components/ui/Loader";
 import FormContainer from "../components/FormContainer";
 import { Button, Card, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { useUpdateProfileMutation } from "../slices/usersApiSlice";
+import {
+  useUpdateProfileMutation,
+  useUserListingsQuery,
+} from "../slices/usersApiSlice";
 import { toast } from "react-toastify";
 import { setCredentials } from "../slices/authSlice";
 import { Link, useNavigate } from "react-router-dom";
+import { BASE_URL } from "../utils/constants";
 
 const Profile = () => {
   const [userName, setUserName] = useState("");
@@ -17,6 +21,14 @@ const Profile = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
+
+  const {
+    data: userListings,
+    isLoading: loadingListings,
+    refetch,
+  } = useUserListingsQuery(userInfo.user._id);
+  console.log(userListings);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -39,6 +51,18 @@ const Profile = () => {
         toast.error(err?.data?.message || err.error);
       }
     }
+  };
+
+  // show listings
+  const handleShowListings = async () => {
+    if (loadingListings) {
+      <Loader />;
+    } else if (userListings) {
+      console.log(userListings);
+    } else {
+      console.log("No listings found");
+    }
+    refetch();
   };
 
   return (
@@ -102,18 +126,57 @@ const Profile = () => {
             </Button>
 
             <Link to="/create-listing">
-              <Button variant="success" className="w-100 my-3 ">
+              <Button variant="info" className="w-100 my-3 ">
                 Create Listing
               </Button>
             </Link>
             {isLoading && <Loader />}
           </Form>
         </Card>
-        <div>
-          <span className="text-danger fw-bold cursor-pointer">
+        <div className="d-flex justify-content-around">
+          <span className="text-danger fw-bold cursor-pointer ">
             Delete Account
           </span>
+          {userListings?.length > 0 && (
+            <button
+              className="fw-bold text-info  btn btn-sm"
+              onClick={handleShowListings}
+            >
+              Show Listings
+            </button>
+          )}
         </div>
+
+        {userListings &&
+          userListings.length > 0 &&
+          userListings.map((listing) => (
+            <div className="d-flex flex-column gap-2">
+              <div
+                key={listing._id}
+                className="border rounded p-3 d-flex justify-content-around align-items-center gap-3"
+              >
+                <Link to={`/listing/${listing._id}`}>
+                  <img
+                    src={`${BASE_URL}${listing.images[0]}`}
+                    alt="listingimage"
+                    className=" object-contain rounded  "
+                    style={{ width: "200px", height: "150px" }}
+                  />
+                </Link>
+                <Link to={`/listing/${listing._id}`} className="fw-bold">
+                  {listing.name}
+                </Link>
+                <div className="d-flex flex-column">
+                  <button className="btn btn-sm fw-bold text-danger ">
+                    Delete
+                  </button>
+                  <button className="btn btn-sm fw-bold text-success ">
+                    Edit
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
       </FormContainer>
     </div>
   );

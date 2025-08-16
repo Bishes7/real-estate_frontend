@@ -3,9 +3,11 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import FormContainer from "../components/FormContainer";
 import { toast } from "react-toastify";
 import { useUploadImageMutation } from "../slices/usersApiSlice";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Loader } from "../components/ui/Loader";
 
 const ListingPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -23,8 +25,6 @@ const ListingPage = () => {
   });
 
   const [upload, { isLoading }] = useUploadImageMutation();
-
-  const { userInfo } = useSelector((state) => state.auth);
 
   // one function for all inputs
   const handleChange = (e) => {
@@ -71,11 +71,14 @@ const ListingPage = () => {
     formData.images.forEach((img) => {
       submitData.append("images", img.file);
     });
+    if (formData.regularPrice < formData.discountedPrice)
+      return toast.error("Discounted price must be less than actual price");
 
     try {
-      const { data } = upload(submitData);
+      const res = await upload(submitData).unwrap();
 
       toast.success("Listing created successfully!");
+      navigate(`/listing/${res._id}`);
       setFormData({
         name: "",
         description: "",
@@ -90,9 +93,10 @@ const ListingPage = () => {
         regularPrice: 0,
         discountedPrice: 0,
         images: [],
+        type: "sell",
       });
     } catch (err) {
-      toast.error("Error creating listing");
+      toast.error(err?.data?.message || err.error);
     }
   };
 
@@ -140,19 +144,23 @@ const ListingPage = () => {
               <Row className="my-3">
                 <Col xs={6} md={3}>
                   <Form.Check
-                    id="sell"
-                    type="checkbox"
+                    id="type"
+                    type="radio"
+                    name="type"
                     label="Sell"
-                    checked={formData.sell}
+                    value="sell"
+                    checked={formData.type === "sell"}
                     onChange={handleChange}
                   />
                 </Col>
                 <Col xs={6} md={3}>
                   <Form.Check
-                    id="rent"
-                    type="checkbox"
+                    id="type"
+                    type="radio"
+                    name="type"
                     label="Rent"
-                    checked={formData.rent}
+                    value="rent"
+                    checked={formData.type === "rent"}
                     onChange={handleChange}
                   />
                 </Col>
@@ -216,14 +224,18 @@ const ListingPage = () => {
                   onChange={handleChange}
                 />
                 <Form.Text>Regular price ($ / Month)</Form.Text>
-                <Form.Control
-                  id="discountedPrice"
-                  type="number"
-                  min="0"
-                  value={formData.discountedPrice}
-                  onChange={handleChange}
-                />
-                <Form.Text>Discounted price ($ / Month)</Form.Text>
+                {formData.offer && (
+                  <>
+                    <Form.Control
+                      id="discountedPrice"
+                      type="number"
+                      min="0"
+                      value={formData.discountedPrice}
+                      onChange={handleChange}
+                    />
+                    <Form.Text>Discounted price ($ / Month)</Form.Text>
+                  </>
+                )}
               </Form.Group>
             </Col>
 
@@ -264,9 +276,14 @@ const ListingPage = () => {
                 ))}
               </Row>
 
-              <Button type="submit" className="btn btn-primary w-100">
+              <Button
+                type="submit"
+                className="btn btn-primary w-100"
+                disabled={isLoading}
+              >
                 Create Listing
               </Button>
+              {isLoading && <Loader />}
             </Col>
           </Row>
         </Form>
