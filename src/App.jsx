@@ -10,6 +10,7 @@ import Header from "./components/Header";
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./components/PrivateRoute";
 import ListingPage from "./pages/ListingPage";
+import PropertyLandingPage from "./pages/PropertyLandingPage";
 
 ("./pages/Home");
 
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/about" element={<About />} />
+          <Route path="/listing/:listingId" element={<PropertyLandingPage />} />
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/create-listing" element={<ListingPage />} />

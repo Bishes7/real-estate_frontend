@@ -62,17 +62,7 @@ const Header = () => {
                 </Nav.Link>
 
                 <Nav.Link as={Link} to="/profile">
-                  <img
-                    src={img}
-                    alt="profile"
-                    className="rounded-circle"
-                    style={{
-                      width: 20,
-                      height: 20,
-                      objectFit: "cover",
-                      marginLeft: "7px",
-                    }}
-                  />
+                  Profile
                 </Nav.Link>
               </>
             ) : (

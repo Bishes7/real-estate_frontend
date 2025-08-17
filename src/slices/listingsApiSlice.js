@@ -9,7 +9,14 @@ export const listingApiSlice = apiSlice.injectEndpoints({
         method: "DELETE",
       }),
     }),
+
+    getListing: builder.query({
+      query: (listingId) => ({
+        url: `${LISTING_URL}/get/${listingId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useDeleteListingMutation } = listingApiSlice;
+export const { useDeleteListingMutation, useGetListingQuery } = listingApiSlice;

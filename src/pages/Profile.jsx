@@ -50,6 +50,7 @@ const Profile = () => {
         }).unwrap();
         dispatch(setCredentials(res));
         toast.success("Profile Updated successfully");
+        refetch();
         navigate("/");
       } catch (err) {
         toast.error(err?.data?.message || err.error);
