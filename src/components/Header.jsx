@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
@@ -8,11 +8,12 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import img from "../assets/bishes.JPG";
+
 import { useLogoutMutation } from "../slices/usersApiSlice";
 import { logout } from "../slices/authSlice";
 
 const Header = () => {
+  const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -27,6 +28,14 @@ const Header = () => {
     }
   };
   const { userInfo } = useSelector((state) => state.auth);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("searchTerm", searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
   return (
     <Navbar expand="md" bg="secondary-subtle" className="shadow-lg  p-2">
       <Container>
@@ -38,15 +47,22 @@ const Header = () => {
         <Navbar.Toggle aria-controls="main-navbar" />
 
         <Navbar.Collapse id="main-navbar" className="justify-content-between">
-          <Form className="d-flex mx-auto  " style={{ maxWidth: "500px" }}>
+          <Form
+            className="d-flex mx-auto  "
+            style={{ maxWidth: "500px" }}
+            onSubmit={handleSubmit}
+          >
             <InputGroup style={{ maxWidth: "200px" }}>
               <Form.Control
                 type="text"
                 placeholder="Search..."
                 className="form-control-sm "
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
               <InputGroup.Text>
-                <FaSearch />
+                <button>
+                  <FaSearch />
+                </button>
               </InputGroup.Text>
             </InputGroup>
           </Form>

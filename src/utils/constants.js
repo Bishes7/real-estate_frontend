@@ -4,3 +4,4 @@ export const AUTH_URL = "/api/auth";
 export const USERS_URL = "/api/user";
 export const UPLOADS_URL = "/api/upload";
 export const LISTING_URL = "/api/listing";
+export const CONTACT_URL = "/api/contact";

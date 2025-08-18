@@ -16,7 +16,18 @@ export const listingApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+
+    searchListings: builder.query({
+      query: () => ({
+        url: `${LISTING_URL}/get`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useDeleteListingMutation, useGetListingQuery } = listingApiSlice;
+export const {
+  useDeleteListingMutation,
+  useGetListingQuery,
+  useSearchListingsQuery,
+} = listingApiSlice;

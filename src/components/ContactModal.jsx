@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { Message } from "./ui/Message";
+import { useContactMessageMutation } from "../slices/contactApiSlice";
 
-const ContactModal = ({ show, handleClose, listingId, listingName }) => {
+const ContactModal = ({ show, handleClose, listingId }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(null);
+
+  const [contactMessage, { isLoading, error }] = useContactMessageMutation();
 
   const handleOnChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,12 +19,12 @@ const ContactModal = ({ show, handleClose, listingId, listingName }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setSuccess(null);
 
     try {
+      await contactMessage({ listingId, ...formData }).unwrap();
       toast.success("Your message has been sent");
       setFormData({ name: "", email: "", message: "" });
+      handleClose();
     } catch (err) {
       toast.error(err?.data?.message);
     }
@@ -34,7 +35,6 @@ const ContactModal = ({ show, handleClose, listingId, listingName }) => {
         <Modal.Title>Contact Agent</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {success && <Message variant="info">{success}</Message>}
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label>Name</Form.Label>
@@ -60,8 +60,8 @@ const ContactModal = ({ show, handleClose, listingId, listingName }) => {
             <Form.Label>Message</Form.Label>
             <Form.Control
               name="message"
-              type="text"
-              value={formData.email}
+              as="textarea"
+              value={formData.message}
               onChange={handleOnChange}
               required
             />
@@ -70,9 +70,9 @@ const ContactModal = ({ show, handleClose, listingId, listingName }) => {
             type="submit"
             variant="dark"
             className="w-100 fw-bold"
-            disabled={loading}
+            disabled={isLoading}
           >
-            {loading ? "Sending..." : "Send Message"}
+            {isLoading ? "Sending..." : "Send Message"}
           </Button>
         </Form>
       </Modal.Body>
