@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./components/PrivateRoute";
 import ListingPage from "./pages/ListingPage";
 import PropertyLandingPage from "./pages/PropertyLandingPage";
+import Chatbot from "./components/ui/ChatBot";
 
 ("./pages/Home");
 
@@ -18,6 +19,7 @@ const App = () => {
   return (
     <>
       <BrowserRouter>
+        <Chatbot />
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />

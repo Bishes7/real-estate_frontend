@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useGetListingQuery } from "../slices/listingsApiSlice";
 import { useParams } from "react-router-dom";
 import { Loader } from "../components/ui/Loader";
@@ -13,8 +13,10 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import ContactModal from "../components/ContactModal";
 
 const PropertyLandingPage = () => {
+  const [showModal, setShowModal] = useState(false);
   const { listingId } = useParams();
   const { data: listing, isLoading, error } = useGetListingQuery(listingId);
 
@@ -97,7 +99,7 @@ const PropertyLandingPage = () => {
           <div className="d-flex gap-4 flex-wrap mt-3 ">
             <span className="d-flex align-items-center gap-1 ">
               <FaBed />
-              {listing.beds} Beds
+              {listing.beds > 1 ? `${listing.beds}beds` : `${listing.beds} bed`}
             </span>
             <span className="d-flex align-items-center gap-1">
               <FaBath />
@@ -113,7 +115,22 @@ const PropertyLandingPage = () => {
             </span>
           </div>
         </div>
+        <div className="mt-2 mb-2">
+          <button
+            className="btn btn-dark w-100 py-2 fw-bold"
+            onClick={() => setShowModal(true)}
+          >
+            Contact Agents
+          </button>
+        </div>
       </FormContainer>
+
+      <ContactModal
+        show={showModal}
+        listingId={listingId}
+        listingName={listing?.name}
+        handleClose={() => setShowModal(false)}
+      />
     </div>
   );
 };
