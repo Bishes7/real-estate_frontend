@@ -18,10 +18,14 @@ export const listingApiSlice = apiSlice.injectEndpoints({
     }),
 
     searchListings: builder.query({
-      query: () => ({
-        url: `${LISTING_URL}/get`,
-        method: "GET",
-      }),
+      query: (params) => {
+        const queryString = new URLSearchParams(params).toString();
+        console.log("Frontend hitting:", `${LISTING_URL}/get?${queryString}`);
+        return {
+          url: `${LISTING_URL}/get?${queryString}`,
+          method: "GET",
+        };
+      },
     }),
   }),
 });
