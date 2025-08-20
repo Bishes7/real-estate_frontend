@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import Form from "react-bootstrap/Form";
-import Container from "react-bootstrap/Container";
-import InputGroup from "react-bootstrap/InputGroup";
-import Nav from "react-bootstrap/Nav";
-
-import Navbar from "react-bootstrap/Navbar";
+import {
+  Form,
+  Container,
+  InputGroup,
+  Nav,
+  Navbar,
+  Button,
+  NavDropdown,
+} from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-
 import { useLogoutMutation } from "../slices/usersApiSlice";
 import { logout } from "../slices/authSlice";
 import { useSearchListingsQuery } from "../slices/listingsApiSlice";
@@ -17,38 +19,69 @@ import { Loader } from "./ui/Loader";
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [debounced, setDebounced] = useState("");
+  const inputRef = useRef(null);
+  const popupRef = useRef(null);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const [logOutApi] = useLogoutMutation();
-  const handleLogOut = async () => {
-    try {
-      await logOutApi().unwrap();
-      dispatch(logout());
-      navigate("/login");
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const { userInfo } = useSelector((state) => state.auth);
+  console.log("userInfo:", userInfo);
 
+  // Debounce search term (300ms)
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(searchTerm.trim()), 300);
+    return () => clearTimeout(t);
+  }, [searchTerm]);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const onDocClick = (e) => {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(e.target) &&
+        inputRef.current &&
+        !inputRef.current.contains(e.target)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
+
+  // Only query when we want suggestions and at least 2 chars
+  const shouldQuery = showSuggestions && debounced.length >= 2;
   const {
     data: searchResults,
     isLoading,
     error,
-  } = useSearchListingsQuery({ searchTerm }, { skip: !searchTerm });
+  } = useSearchListingsQuery({ searchTerm: debounced }, { skip: !shouldQuery });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!searchTerm.trim()) return;
-
+    const q = searchTerm.trim();
+    if (!q) return;
+    setShowSuggestions(false);
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set("searchTerm", searchTerm);
-    const searchQuery = urlParams.toString();
-    navigate(`/search?${searchQuery}`);
+    urlParams.set("searchTerm", q);
+    navigate(`/search?${urlParams.toString()}`);
   };
+
+  const handleLogout = async () => {
+    try {
+      await logOutApi().unwrap();
+      dispatch(logout());
+      navigate("/login");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
-    <Navbar expand="md" bg="secondary-subtle" className="shadow-lg  p-2">
+    <Navbar expand="md" bg="secondary-subtle" className="shadow-lg p-2">
       <Container>
         <Navbar.Brand className="fw-bold ">
           <span className="text-secondary">Real</span>
@@ -59,27 +92,36 @@ const Header = () => {
 
         <Navbar.Collapse id="main-navbar" className="justify-content-between">
           <Form
-            className="d-flex mx-auto  "
-            style={{ maxWidth: "500px" }}
+            className="d-flex mx-auto"
+            style={{ maxWidth: 500 }}
             onSubmit={handleSubmit}
+            autoComplete="off"
           >
-            <InputGroup style={{ maxWidth: "200px" }}>
+            <InputGroup style={{ maxWidth: 320 }}>
               <Form.Control
+                ref={inputRef}
                 type="text"
+                name="search"
+                autoComplete="off"
                 placeholder="Search..."
-                className="form-control-sm "
+                className="form-control-sm"
+                value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => setShowSuggestions(true)}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") setShowSuggestions(false);
+                }}
               />
-              <InputGroup.Text>
-                <button>
-                  <FaSearch />
-                </button>
-              </InputGroup.Text>
+              <Button type="submit" variant="light">
+                <FaSearch />
+              </Button>
             </InputGroup>
           </Form>
 
-          {searchTerm && (
+          {/* Suggestions popup (only when focused + >=2 chars) */}
+          {showSuggestions && debounced.length >= 2 && (
             <div
+              ref={popupRef}
               className="position-absolute bg-white shadow p-2 mt-5 rounded"
               style={{
                 top: "50px",
@@ -93,23 +135,29 @@ const Header = () => {
               {error && (
                 <Message variant="danger">{error?.data?.message}</Message>
               )}
-              {searchResults &&
+
+              {Array.isArray(searchResults) &&
                 searchResults.map((item) => (
                   <div
                     key={item._id}
                     className="p-2 border-bottom"
-                    onClick={() => navigate(`/listing/${item._id}`)}
+                    onClick={() => {
+                      setShowSuggestions(false);
+                      navigate(`/listing/${item._id}`);
+                    }}
                     style={{ cursor: "pointer" }}
                   >
                     <strong>{item.name}</strong>
                     <div className="small text-muted">{item.address}</div>
                   </div>
                 ))}
-              {searchResults?.length === 0 && (
+
+              {Array.isArray(searchResults) && searchResults.length === 0 && (
                 <div className="p-2">No results found</div>
               )}
             </div>
           )}
+
           <Nav className="fw-bold gap-2 ms-auto ">
             <Nav.Link as={Link} to="/">
               Home
@@ -117,12 +165,28 @@ const Header = () => {
 
             {userInfo ? (
               <>
-                <Nav.Link as={Link} to="/login" onClick={handleLogOut}>
-                  Logout
-                </Nav.Link>
+                {/* ✅ Admin Dropdown Menu */}
+                {userInfo &&
+                  userInfo.user &&
+                  userInfo.user.role === "admin" && (
+                    <NavDropdown title="Admin" id="admin-menu">
+                      <NavDropdown.Item as={Link} to="/admin/dashboard">
+                        Dashboard
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/admin/listings">
+                        Manage Listings
+                      </NavDropdown.Item>
+                      <NavDropdown.Item as={Link} to="/admin/users">
+                        Manage Users
+                      </NavDropdown.Item>
+                    </NavDropdown>
+                  )}
 
                 <Nav.Link as={Link} to="/profile">
                   Profile
+                </Nav.Link>
+                <Nav.Link as={Link} to="/login" onClick={handleLogout}>
+                  Logout
                 </Nav.Link>
               </>
             ) : (

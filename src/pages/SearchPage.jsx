@@ -50,7 +50,11 @@ const SearchPage = () => {
   return (
     <Row className="mt-3 ">
       <Col md={3}>
-        <Form className="p-3 rounded" onSubmit={handleOnSubmit}>
+        <Form
+          className="p-3 rounded"
+          onSubmit={handleOnSubmit}
+          autoComplete="off"
+        >
           {/* Search box */}
           <Form.Group className="mb-3">
             <Form.Label>Search</Form.Label>
@@ -60,6 +64,7 @@ const SearchPage = () => {
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search..."
               className="w-75"
+              autoComplete="off"
             />
           </Form.Group>
 
