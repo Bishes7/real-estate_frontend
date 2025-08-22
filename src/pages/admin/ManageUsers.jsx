@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { Loader } from "../../components/ui/Loader";
 import { Message } from "../../components/ui/Message";
 import { Button, Table } from "react-bootstrap";
+import { FaTrash, FaUser, FaUserShield } from "react-icons/fa";
 
 const ManageUsers = () => {
   const { data: users, isLoading, error, refetch } = useGetUsersQuery();
@@ -26,10 +27,10 @@ const ManageUsers = () => {
   };
 
   // update user role
-  const handleRoleUpdate = async (userId) => {
+  const handleRoleUpdate = async (userId, newRole) => {
     try {
-      const res = await updateUserRole(userId).unwrap();
-      toast.success(res.message);
+      const res = await updateUserRole({ id: userId, role: newRole }).unwrap();
+      toast.success("User updated successfully");
       refetch();
     } catch (err) {
       toast.error(err?.data?.message);
@@ -58,24 +59,42 @@ const ManageUsers = () => {
               <td> {user._Id}</td>
               <td>{user.userName}</td>
               <td>{user.email}</td>
-              <td>{user.role}</td>
               <td>
-                <div className="d-flex flex-column ">
-                  <Button
-                    variant="info"
-                    size="sm"
-                    onClick={() => handleRoleUpdate(user._id)}
-                  >
-                    {user.role === "admin"
-                      ? "Demote to User"
-                      : "Promoto to Admin"}{" "}
-                  </Button>{" "}
+                <span
+                  className={`badge ${
+                    user.role === "admin" ? "bg-primary" : "bg-secondary"
+                  }`}
+                >
+                  {user.role}
+                </span>
+              </td>
+              <td>
+                <div className="d-flex flex-column gap-2 ">
+                  {user.role === "admin" ? (
+                    <Button
+                      variant="warning"
+                      size="sm"
+                      onClick={() => handleRoleUpdate(user._id, "user")}
+                    >
+                      Demote
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="success"
+                      size="sm"
+                      onClick={() => handleRoleUpdate(user._id, "admin")}
+                    >
+                      Promote
+                    </Button>
+                  )}
+
                   <Button
                     variant="danger"
                     size="sm"
+                    className="px-3 d-flex align-items-center gap-2 w-75"
                     onClick={() => handleDelete(user._id)}
-                    className="me-2"
                   >
+                    <FaTrash />
                     Delete
                   </Button>
                 </div>

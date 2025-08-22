@@ -3,6 +3,14 @@ import { apiSlice } from "./apiSlice";
 
 export const listingApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    getListings: builder.query({
+      query: () => ({
+        url: `${LISTING_URL}/get`,
+        method: "GET",
+      }),
+      providesTags: ["Listings"],
+    }),
+
     deleteListing: builder.mutation({
       query: (listingId) => ({
         url: `${LISTING_URL}/delete/${listingId}`,
@@ -34,4 +42,5 @@ export const {
   useDeleteListingMutation,
   useGetListingQuery,
   useSearchListingsQuery,
+  useGetListingsQuery,
 } = listingApiSlice;

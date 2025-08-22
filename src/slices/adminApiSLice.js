@@ -17,9 +17,10 @@ export const adminApiSlice = apiSlice.injectEndpoints({
     }),
 
     updateUserRole: builder.mutation({
-      query: (userId) => ({
-        url: `${ADMIN_URL}/users/${userId}/role`,
+      query: (id, role) => ({
+        url: `${ADMIN_URL}/users/${id}/role`,
         method: "PUT",
+        body: { role },
       }),
       invalidatesTags: ["User"],
     }),
