@@ -17,7 +17,7 @@ import AdminRoute from "./components/admin/AdminRoute";
 import AdminLayout from "./pages/admin/AdminLayoutPage";
 import AdminDashBoard from "./pages/admin/AdminDashBoard";
 import AdminListings from "./pages/admin/AdminListings";
-import EditUsers from "./pages/admin/EditUsers";
+import ManageUsers from "./pages/admin/ManageUsers";
 
 const App = () => {
   return (
@@ -62,7 +62,7 @@ const App = () => {
               path="/admin/users"
               element={
                 <AdminLayout>
-                  <EditUsers />
+                  <ManageUsers />
                 </AdminLayout>
               }
             />
