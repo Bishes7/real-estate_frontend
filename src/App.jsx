@@ -20,6 +20,9 @@ import AdminDashBoard from "./pages/admin/AdminDashBoard";
 import ManageUsers from "./pages/admin/ManageUsers";
 import ManageListings from "./pages/admin/ManageListings";
 
+import ContactPage from "./pages/ContactPage";
+import EditListtingPage from "./pages/admin/EditListtingPage";
+
 const App = () => {
   return (
     <>
@@ -39,6 +42,7 @@ const App = () => {
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/create-listing" element={<ListingPage />} />
+            <Route path="/contact-us" element={<ContactPage />} />
           </Route>
 
           {/* Admin-only routes */}
@@ -66,6 +70,10 @@ const App = () => {
                   <ManageUsers />
                 </AdminLayout>
               }
+            />
+            <Route
+              path="/admin/listings/:id/edit"
+              element={<EditListtingPage />}
             />
           </Route>
         </Routes>

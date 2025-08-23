@@ -188,6 +188,9 @@ const Header = () => {
                 <Nav.Link as={Link} to="/login" onClick={handleLogout}>
                   Logout
                 </Nav.Link>
+                <Nav.Link as={Link} to="/contact-us">
+                  Contact Us
+                </Nav.Link>
               </>
             ) : (
               <>

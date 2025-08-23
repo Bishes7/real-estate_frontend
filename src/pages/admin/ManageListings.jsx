@@ -7,8 +7,10 @@ import {
   useDeleteListingMutation,
   useGetListingsQuery,
 } from "../../slices/listingsApiSlice";
+import { useNavigate } from "react-router-dom";
 
 const ManageListings = () => {
+  const navigate = useNavigate();
   const { data: listings, isLoading, error, refetch } = useGetListingsQuery();
   const [deleteListing] = useDeleteListingMutation();
 
@@ -56,6 +58,17 @@ const ManageListings = () => {
               </td>
               <td>${listing.regularPrice}</td>
               <td>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="me-2"
+                  onClick={() =>
+                    navigate(`/admin/listings/${listing._id}/edit`)
+                  }
+                >
+                  {" "}
+                  <i className="bi bi-pencil"></i> Edit
+                </Button>
                 <Button
                   variant="danger"
                   size="sm"

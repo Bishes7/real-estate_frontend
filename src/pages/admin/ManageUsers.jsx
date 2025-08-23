@@ -75,7 +75,9 @@ const ManageUsers = () => {
                       variant="warning"
                       size="sm"
                       onClick={() => handleRoleUpdate(user._id, "user")}
+                      className="w-75"
                     >
+                      <FaUser />
                       Demote
                     </Button>
                   ) : (
@@ -83,7 +85,9 @@ const ManageUsers = () => {
                       variant="success"
                       size="sm"
                       onClick={() => handleRoleUpdate(user._id, "admin")}
+                      className="w-75"
                     >
+                      <FaUser />
                       Promote
                     </Button>
                   )}
