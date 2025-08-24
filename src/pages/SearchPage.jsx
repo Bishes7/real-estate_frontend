@@ -3,6 +3,7 @@ import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { useSearchListingsQuery } from "../slices/listingsApiSlice";
 import { Loader } from "../components/ui/Loader";
 import { Message } from "../components/ui/Message";
+import { BASE_URL } from "../utils/constants";
 
 const SearchPage = () => {
   const [search, setSearch] = useState("");
@@ -162,7 +163,11 @@ const SearchPage = () => {
                   <Card className="shadow-sm h-100">
                     <Card.Img
                       variant="top"
-                      src={listing.images?.[0]}
+                      src={
+                        listing.images && listing.images.length > 0
+                          ? `${BASE_URL}${listing.images[0]}`
+                          : "/default-image.jpg"
+                      }
                       alt={listing.name}
                       style={{ height: "200px", objectFit: "cover" }}
                     />
