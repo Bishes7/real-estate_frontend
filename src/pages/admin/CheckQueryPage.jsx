@@ -1,17 +1,43 @@
 import React from "react";
-import { useGetMessageQuery } from "../../slices/contactApiSlice";
+import {
+  useDeleteMessageMutation,
+  useGetMessageQuery,
+  useMarkAsReadMutation,
+} from "../../slices/contactApiSlice";
 import { Loader } from "../../components/ui/Loader";
 import { Message } from "../../components/ui/Message";
-import { Button, Container, Table } from "react-bootstrap";
+import { Badge, Button, Container, Table } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const CheckQueryPage = () => {
-  const { data: messages, isLoading, error } = useGetMessageQuery();
+  const { data: messages, isLoading, error, refetch } = useGetMessageQuery();
+  const [deleteMessage] = useDeleteMessageMutation();
+  const [markRead] = useMarkAsReadMutation();
 
   if (isLoading) return <Loader />;
   if (error) return <Message variant="danger">{error}</Message>;
 
-  const handleDelete = (e) => {
-    e.preventDefault();
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure")) {
+      try {
+        await deleteMessage(id).unwrap();
+        toast.success("Message deleted");
+      } catch (err) {
+        toast.err(err?.data?.message);
+      }
+    }
+  };
+
+  //   update message status
+  const handleReply = async (id, email) => {
+    try {
+      await markRead(id).unwrap();
+      toast.info("Message mark as read");
+      refetch();
+      window.location.href = `mailto: ${email}?subject=Regarding%20your%20property%20enquiry`;
+    } catch (err) {
+      toast.err(err?.data?.message);
+    }
   };
 
   return (
@@ -25,6 +51,7 @@ const CheckQueryPage = () => {
             <th>Email</th>
             <th>Message</th>
             <th>Date</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -37,10 +64,18 @@ const CheckQueryPage = () => {
               <td>{msg.message}</td>
               <td>{new Date(msg.createdAt).toLocaleString()}</td>
               <td>
+                {msg.status === "unread" ? (
+                  <Badge bg="warning text-dark">Unread</Badge>
+                ) : (
+                  <Badge bg="success">Read</Badge>
+                )}
+              </td>
+              <td>
                 <Button
                   size="sm"
                   variant="outline-primary"
                   href={`mailto:${msg.email}`}
+                  onClick={() => handleReply(msg._id)}
                 >
                   Reply
                 </Button>

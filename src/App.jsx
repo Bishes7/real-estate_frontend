@@ -38,12 +38,12 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/listing/:listingId" element={<PropertyLandingPage />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/contact-us" element={<ContactPage />} />
 
           {/* Private (logged-in) routes */}
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/create-listing" element={<ListingPage />} />
-            <Route path="/contact-us" element={<ContactPage />} />
           </Route>
 
           {/* Admin-only routes */}

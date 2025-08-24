@@ -18,8 +18,27 @@ export const contactMessageSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["Messages"],
     }),
+
+    deleteMessage: builder.mutation({
+      query: (userId) => ({
+        url: `${CONTACT_URL}/${userId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Messages"],
+    }),
+
+    markAsRead: builder.mutation({
+      query: (id) => ({
+        url: `${CONTACT_URL}/${id}/read`,
+        method: "PUT",
+      }),
+    }),
   }),
 });
 
-export const { useContactMessageMutation, useGetMessageQuery } =
-  contactMessageSlice;
+export const {
+  useContactMessageMutation,
+  useGetMessageQuery,
+  useDeleteMessageMutation,
+  useMarkAsReadMutation,
+} = contactMessageSlice;

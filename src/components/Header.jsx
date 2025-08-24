@@ -171,13 +171,7 @@ const Header = () => {
                   userInfo.user.role === "admin" && (
                     <NavDropdown title="Admin" id="admin-menu">
                       <NavDropdown.Item as={Link} to="/admin/dashboard">
-                        Dashboard
-                      </NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/admin/listings">
-                        Manage Listings
-                      </NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to="/admin/users">
-                        Manage Users
+                        Preview
                       </NavDropdown.Item>
                     </NavDropdown>
                   )}
@@ -188,9 +182,6 @@ const Header = () => {
                 <Nav.Link as={Link} to="/login" onClick={handleLogout}>
                   Logout
                 </Nav.Link>
-                <Nav.Link as={Link} to="/contact-us">
-                  Contact Us
-                </Nav.Link>
               </>
             ) : (
               <>
@@ -199,6 +190,9 @@ const Header = () => {
                 </Nav.Link>
                 <Nav.Link as={Link} to="/login">
                   Login
+                </Nav.Link>
+                <Nav.Link as={Link} to="/contact-us">
+                  Contact Us
                 </Nav.Link>
               </>
             )}

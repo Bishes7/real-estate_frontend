@@ -6,7 +6,6 @@ import { useContactMessageMutation } from "../slices/contactApiSlice";
 const ContactAdmin = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
 
@@ -15,7 +14,7 @@ const ContactAdmin = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    if (!name || !email || !contactNumber || !subject || !message) {
+    if (!name || !email || !subject || !message) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -24,7 +23,6 @@ const ContactAdmin = () => {
       await contactMessage({
         name,
         email,
-        contactNumber,
         subject,
         message,
       }).unwrap();
@@ -32,7 +30,6 @@ const ContactAdmin = () => {
       // Reset form fields
       setName("");
       setEmail("");
-      setContactNumber("");
       setSubject("");
       setMessage("");
     } catch (err) {
@@ -68,18 +65,6 @@ const ContactAdmin = () => {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </Form.Group>
-
-          {/* Contact Number */}
-          <Form.Group className="mb-3" controlId="contactNumber">
-            <Form.Label>Contact Number</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter your contact number"
-              value={contactNumber}
-              onChange={(e) => setContactNumber(e.target.value)}
               required
             />
           </Form.Group>
