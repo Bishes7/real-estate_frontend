@@ -22,6 +22,7 @@ import ManageListings from "./pages/admin/ManageListings";
 
 import ContactPage from "./pages/ContactPage";
 import EditListtingPage from "./pages/admin/EditListtingPage";
+import CheckQueryPage from "./pages/admin/CheckQueryPage";
 
 const App = () => {
   return (
@@ -76,6 +77,7 @@ const App = () => {
               element={<EditListtingPage />}
             />
           </Route>
+          <Route path="/admin/check-query" element={<CheckQueryPage />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

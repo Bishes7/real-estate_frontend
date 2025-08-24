@@ -16,6 +16,9 @@ const AdminSidebar = () => {
         <Nav.Link as={Link} to="/admin/users" className="text-white">
           Manage Users
         </Nav.Link>
+        <Nav.Link as={Link} to="/admin/check-query" className="text-white">
+          Check Query
+        </Nav.Link>
       </Nav>
     </div>
   );

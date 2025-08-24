@@ -10,7 +10,16 @@ export const contactMessageSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+
+    getMessage: builder.query({
+      query: () => ({
+        url: CONTACT_URL,
+        method: "GET",
+      }),
+      providesTags: ["Messages"],
+    }),
   }),
 });
 
-export const { useContactMessageMutation } = contactMessageSlice;
+export const { useContactMessageMutation, useGetMessageQuery } =
+  contactMessageSlice;
