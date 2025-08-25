@@ -32,11 +32,15 @@ const CheckQueryPage = () => {
   const handleReply = async (id, email) => {
     try {
       await markRead(id).unwrap();
-      toast.info("Message mark as read");
+      toast.info("Message marked as read");
       refetch();
-      window.location.href = `mailto: ${email}?subject=Regarding%20your%20property%20enquiry`;
+      // Open the default mail client in a new tab/window
+      window.open(
+        `mailto:${email}?subject=Regarding%20your%20property%20enquiry`,
+        "_blank"
+      );
     } catch (err) {
-      toast.err(err?.data?.message);
+      toast.error(err?.data?.message);
     }
   };
 
@@ -75,7 +79,7 @@ const CheckQueryPage = () => {
                   size="sm"
                   variant="outline-primary"
                   href={`mailto:${msg.email}`}
-                  onClick={() => handleReply(msg._id)}
+                  onClick={() => handleReply(msg._id, msg.email)}
                 >
                   Reply
                 </Button>

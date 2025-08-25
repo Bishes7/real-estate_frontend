@@ -4,8 +4,12 @@ import { Link } from "react-router-dom";
 
 const AdminSidebar = () => {
   return (
-    <div className="bg-dark text-white p-3 vh-100" style={{ width: "220px" }}>
-      <h5 className="mb-4">Admin Panel</h5>
+    <div
+      className="bg-dark text-white p-3 vh-100 fw-bold"
+      style={{ width: "220px" }}
+    >
+      <h5 className="mb-4 fw-bold">Admin Panel</h5>
+      <hr />
       <Nav className="flex-column">
         <Nav.Link as={Link} to="/admin/dashboard" className="text-white">
           Dashboard

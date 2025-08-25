@@ -1,15 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Loader } from "../components/ui/Loader";
 import { Message } from "../components/ui/Message";
-import { Card, Button, Row, Col } from "react-bootstrap";
+import { Card, Button, Row, Col, Pagination } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useGetListingsQuery } from "../slices/listingsApiSlice";
 import { BASE_URL } from "../utils/constants";
 
 const Home = () => {
-  const { data: listings, isLoading, error } = useGetListingsQuery();
-  console.log(listings);
+  const [page, setPage] = useState(1);
+  const limit = 6; // listings per page
+  const startIndex = (page - 1) * limit;
+
+  const {
+    data: listings,
+    isLoading,
+    error,
+  } = useGetListingsQuery({
+    limit,
+    startIndex,
+  });
 
   if (isLoading) return <Loader />;
   if (error)
@@ -19,11 +29,14 @@ const Home = () => {
       </Message>
     );
 
+  const { listings: listingData, totalCount } = listings;
+  const totalPages = Math.ceil(totalCount / limit);
+
   return (
     <div className="container mt-4">
       <h2 className="mb-4">Available Listings</h2>
       <Row>
-        {listings?.map((listing) => (
+        {listingData?.map((listing) => (
           <Col key={listing._id} md={4} className="mb-4">
             <Card className="shadow-sm">
               <Card.Img
@@ -60,6 +73,28 @@ const Home = () => {
           </Col>
         ))}
       </Row>
+
+      {totalPages > 1 && (
+        <Pagination className="justify-content-center mt-4">
+          <Pagination.Prev
+            disabled={page === 1}
+            onClick={() => setPage((prev) => prev - 1)}
+          />
+          {[...Array(totalPages).keys()].map((x) => (
+            <Pagination.Item
+              key={x + 1}
+              active={x + 1 === page}
+              onClick={() => setPage(x + 1)}
+            >
+              {x + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            disabled={page === totalPages}
+            onClick={() => setPage((prev) => prev + 1)}
+          />
+        </Pagination>
+      )}
     </div>
   );
 };

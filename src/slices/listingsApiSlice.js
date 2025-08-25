@@ -4,8 +4,8 @@ import { apiSlice } from "./apiSlice";
 export const listingApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getListings: builder.query({
-      query: () => ({
-        url: `${LISTING_URL}/get`,
+      query: ({ limit, startIndex }) => ({
+        url: `${LISTING_URL}/get?limit=${limit}&startIndex=${startIndex}`,
         method: "GET",
       }),
       providesTags: ["Listings"],

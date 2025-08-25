@@ -14,7 +14,7 @@ const EditListingScreen = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data: listing, isLoading, error } = useGetListingQuery(id);
+  const { data: listing, isLoading, error, refetch } = useGetListingQuery(id);
   const [updateListing, { isLoading: updating }] = useUpdateListingMutation();
 
   const [formData, setFormData] = useState({
@@ -91,6 +91,7 @@ const EditListingScreen = () => {
     try {
       await updateListing({ id, data }).unwrap();
       toast.success("Listing updated successfully");
+      refetch();
       navigate("/admin/listings");
     } catch (err) {
       toast.error(err?.data?.message || "Failed to update listing");
