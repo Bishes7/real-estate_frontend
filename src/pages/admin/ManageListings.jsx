@@ -7,11 +7,19 @@ import {
   useDeleteListingMutation,
   useGetListingsQuery,
 } from "../../slices/listingsApiSlice";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 
 const ManageListings = () => {
   const navigate = useNavigate();
-  const { data: listings, isLoading, error, refetch } = useGetListingsQuery();
+  const {
+    data: listings,
+    isLoading,
+    error,
+    refetch,
+  } = useGetListingsQuery({
+    limit: 50,
+    startIndex: 0,
+  });
   const [deleteListing] = useDeleteListingMutation();
 
   const handleDelete = async (id) => {
@@ -29,6 +37,7 @@ const ManageListings = () => {
   if (isLoading) return <Loader />;
   if (error) return <Message variant="danger">{error?.data?.message}</Message>;
 
+  const { listings: listingData } = listings || {};
   return (
     <div>
       <h2 className="mb-4">Manage Listings</h2>
@@ -43,7 +52,7 @@ const ManageListings = () => {
           </tr>
         </thead>
         <tbody>
-          {listings?.map((listing) => (
+          {listingData?.map((listing) => (
             <tr key={listing._id}>
               <td>{listing._id}</td>
               <td>{listing.name}</td>

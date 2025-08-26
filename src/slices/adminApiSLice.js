@@ -24,6 +24,12 @@ export const adminApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+
+    getStats: builder.query({
+      query: () => ({
+        url: `${ADMIN_URL}/stats`,
+      }),
+    }),
   }),
 });
 
@@ -31,4 +37,5 @@ export const {
   useUpdateUserRoleMutation,
   useDeleteUserMutation,
   useGetUsersQuery,
+  useGetStatsQuery,
 } = adminApiSlice;
