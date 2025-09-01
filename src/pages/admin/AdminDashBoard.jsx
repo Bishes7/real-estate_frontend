@@ -15,7 +15,11 @@ const AdminDashboard = () => {
 
   return (
     <Container fluid className="my-4">
-      <Row className="g-3">
+      <div className="mb-3">
+        <h4 className="fw-bold">Admin Dashboard</h4>
+        <p className="text-muted mb-0">Key insights of your platform</p>
+      </div>
+      <Row className="g-4">
         <Col md={4}>
           <PieChartComponent data={stats?.listingsByType} />
         </Col>
@@ -23,7 +27,7 @@ const AdminDashboard = () => {
           <BarChartComponent data={stats?.listingsByMonth} />
         </Col>
         <Col md={4}>
-          <LineChartComponent data={stats?.usersByMonth} />
+          <LineChartComponent data={stats?.usersByWeek} />
         </Col>
       </Row>
     </Container>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { FaRobot } from "react-icons/fa";
+import { useSendMessageMutation } from "../../slices/botApiSlice";
 
 const Chatbot = () => {
   const [open, setOpen] = useState(false);
@@ -9,26 +10,33 @@ const Chatbot = () => {
   ]);
   const [input, setInput] = useState("");
 
-  const handleSend = (e) => {
+  const [sendMessage] = useSendMessageMutation();
+
+  const handleSend = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
 
     // Add user message
-    const newMessages = [...messages, { sender: "user", text: input }];
+    setMessages((prev) => [...prev, { sender: "user", text: input }]);
 
-    // Add dummy bot reply
-    newMessages.push({
-      sender: "bot",
-      text: "Thanks for your message! (This is a demo 🤖)",
-    });
+    try {
+      // Send to backend
+      const response = await sendMessage({ message: input }).unwrap();
 
-    setMessages(newMessages);
+      // Add bot reply from backend
+      setMessages((prev) => [...prev, { sender: "bot", text: response.reply }]);
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: "Error connecting to the server." },
+      ]);
+    }
+
     setInput("");
   };
 
   return (
     <div>
-      {/* Floating Button */}
       {/* Floating Button */}
       <Button
         variant="primary"
@@ -113,11 +121,7 @@ const Chatbot = () => {
           </div>
 
           {/* Input */}
-          <Form
-            onSubmit={handleSend}
-            className="d-flex p-2 border-top"
-            style={{ margin: 0 }}
-          >
+          <Form onSubmit={handleSend} className="d-flex p-2 border-top">
             <Form.Control
               type="text"
               value={input}

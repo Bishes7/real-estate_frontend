@@ -8,22 +8,21 @@ import {
   Tooltip,
   CartesianGrid,
 } from "recharts";
-import { getMonthName } from "../../utils/months";
 
 const LineChartComponent = ({ data }) => {
   const formattedData =
     data?.map((item) => ({
-      month: getMonthName(item._id),
+      week: `Week ${item._id.split("-")[1]}`, // Extract week number from "2025-08"
       count: item.count,
     })) || [];
 
   return (
     <div className="p-3 shadow-sm bg-white rounded" style={{ height: 300 }}>
-      <h6 className="fw-bold text-secondary mb-2">New Users per Month</h6>
+      <h6 className="fw-bold text-secondary mb-2">New Users per Week</h6>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={formattedData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
+          <XAxis dataKey="week" />
           <YAxis />
           <Tooltip />
           <Line

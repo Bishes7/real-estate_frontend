@@ -6,3 +6,4 @@ export const UPLOADS_URL = "/api/upload";
 export const LISTING_URL = "/api/listing";
 export const CONTACT_URL = "/api/contact";
 export const ADMIN_URL = "/api/admin";
+export const BOT_URL = "/api/chatbot";
