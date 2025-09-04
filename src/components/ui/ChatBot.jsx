@@ -1,38 +1,77 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Form } from "react-bootstrap";
 import { FaRobot } from "react-icons/fa";
-import { useSendMessageMutation } from "../../slices/botApiSlice";
+import {
+  useGetChatHistoryQuery,
+  useSaveMessageMutation,
+  useSendMessageMutation,
+} from "../../slices/botApiSlice";
 
 const Chatbot = () => {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    { sender: "bot", text: "Hello 👋 How can I help you today?" },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
+  // Persistent session ID in localStorage
+  const sessionId =
+    localStorage.getItem("chatSessionId") ||
+    (() => {
+      const newId = `session_${Date.now()}`;
+      localStorage.setItem("chatSessionId", newId);
+      return newId;
+    })();
+
+  // API hooks
+  const [saveMessage] = useSaveMessageMutation();
+  const { data: history, refetch } = useGetChatHistoryQuery(sessionId, {
+    skip: !open,
+  });
   const [sendMessage] = useSendMessageMutation();
+
+  // Load chat history when chat opens
+  useEffect(() => {
+    if (open) refetch();
+  }, [open, refetch]);
+
+  // Update messages state with DB history
+  useEffect(() => {
+    if (history) {
+      setMessages(history);
+    }
+  }, [history]);
 
   const handleSend = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    // Add user message
-    setMessages((prev) => [...prev, { sender: "user", text: input }]);
+    const userText = input.trim();
+    setInput("");
+
+    // Show user message immediately in UI
+    setMessages((prev) => [...prev, { sender: "user", text: userText }]);
 
     try {
-      // Send to backend
-      const response = await sendMessage({ message: input }).unwrap();
+      // Save user message to DB
+      await saveMessage({ sessionId, sender: "user", text: userText }).unwrap();
 
-      // Add bot reply from backend
-      setMessages((prev) => [...prev, { sender: "bot", text: response.reply }]);
+      // Send user input to backend for bot response
+      const response = await sendMessage({
+        sessionId,
+        message: userText,
+      }).unwrap();
+      const botText = response.reply || "Sorry, I didn't understand that.";
+
+      // Save bot reply to DB
+      await saveMessage({ sessionId, sender: "bot", text: botText }).unwrap();
+
+      // Display bot reply in UI
+      setMessages((prev) => [...prev, { sender: "bot", text: botText }]);
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: "Error connecting to the server." },
+        { sender: "bot", text: "❌ Error connecting to server." },
       ]);
     }
-
-    setInput("");
   };
 
   return (
