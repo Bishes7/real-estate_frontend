@@ -20,9 +20,7 @@ const Home = () => {
     limit,
     startIndex,
   });
-  console.log("Listings API response:", listings);
 
-  console.log(listings);
   if (isLoading) return <Loader />;
   if (error)
     return (

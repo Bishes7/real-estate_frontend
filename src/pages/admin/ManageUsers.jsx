@@ -95,7 +95,7 @@ const ManageUsers = () => {
                   <Button
                     variant="danger"
                     size="sm"
-                    className="px-3 d-flex align-items-center gap-2 w-75"
+                    className="w-75"
                     onClick={() => handleDelete(user._id)}
                   >
                     <FaTrash />

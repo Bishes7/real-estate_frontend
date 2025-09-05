@@ -4,11 +4,12 @@ import FormContainer from "../components/FormContainer";
 import { Button, Card, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  useDeleteAccountMutation,
   useUpdateProfileMutation,
   useUserListingsQuery,
 } from "../slices/usersApiSlice";
 import { toast } from "react-toastify";
-import { setCredentials } from "../slices/authSlice";
+import { logout, setCredentials } from "../slices/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/constants";
 import { useDeleteListingMutation } from "../slices/listingsApiSlice";
@@ -25,6 +26,8 @@ const Profile = () => {
 
   const [deleteListing, { isLoading: listingDelete, error }] =
     useDeleteListingMutation();
+
+  const [deleteAccount] = useDeleteAccountMutation();
 
   const {
     data: userListings,
@@ -79,6 +82,21 @@ const Profile = () => {
       refetch();
     } catch (err) {
       toast.error(err?.data?.message || err.error);
+    }
+  };
+
+  // delete account
+
+  const handleDeleteAccount = async () => {
+    if (window.confirm("Are you sure you want to delete your account")) {
+      try {
+        await deleteAccount().unwrap();
+        toast.success("Account deleted Successfully");
+        dispatch(logout());
+        navigate("/");
+      } catch (err) {
+        toast.error(err?.data?.message || "Failed to delete");
+      }
     }
   };
   return (
@@ -150,7 +168,10 @@ const Profile = () => {
           </Form>
         </Card>
         <div className="d-flex justify-content-around">
-          <span className="text-danger fw-bold cursor-pointer ">
+          <span
+            className="text-danger fw-bold cursor-pointer "
+            onClick={handleDeleteAccount}
+          >
             Delete Account
           </span>
           {userListings?.length > 0 && (

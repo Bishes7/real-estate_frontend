@@ -70,194 +70,138 @@ const DemoPage = () => {
         </Col>
       </Row>
 
-      {/* Templates / Guided tour (no video) */}
-      <Row className="g-4">
-        {/* Template 1: Search & Filters */}
-        <Col md={6} lg={4}>
-          <Card className="h-100 border-0 shadow-sm">
-            <Card.Header className="bg-white border-0">
-              <h5 className="fw-bold mb-0">🏠 Browse & Filter</h5>
-            </Card.Header>
-            <Card.Body>
-              {/* Fake search bar + chips as template */}
-              <div className="p-3 border rounded mb-3 bg-light">
-                <div className="d-flex gap-2 mb-2">
-                  <Placeholder as="div" animation="wave" className="w-100">
-                    <Placeholder xs={12} style={{ height: 36 }} />
-                  </Placeholder>
-                  <Button size="sm" variant="outline-secondary">
-                    Search
+      <div className="mt-4">
+        <Row className="g-3 justify-content-center">
+          {/* Demo Credentials */}
+          <Col md={4}>
+            <Card className="border-0 shadow-sm h-100">
+              <Card.Body>
+                <div className="d-flex align-items-center justify-content-between mb-2">
+                  <h6 className="fw-bold mb-0">🔑 Demo Credentials</h6>
+                  <Badge bg="light" text="dark">
+                    No signup
+                  </Badge>
+                </div>
+
+                <div className="small text-muted mb-2">Demo User</div>
+                <div className="d-flex align-items-center gap-2 mb-2">
+                  <code className="bg-light px-2 py-1 rounded flex-grow-1">
+                    demo@realestate.com
+                  </code>
+                  <Button
+                    size="sm"
+                    variant="outline-secondary"
+                    onClick={() =>
+                      navigator.clipboard.writeText("demo@realestate.com")
+                    }
+                  >
+                    Copy
                   </Button>
                 </div>
-                <div className="d-flex flex-wrap gap-2">
-                  <Badge bg="secondary">Price: $300k–$600k</Badge>
-                  <Badge bg="secondary">Beds: 3+</Badge>
-                  <Badge bg="secondary">Type: House</Badge>
-                  <Badge bg="secondary">Location: Sydney</Badge>
+                <div className="d-flex align-items-center gap-2">
+                  <code className="bg-light px-2 py-1 rounded flex-grow-1">
+                    Demo@12345
+                  </code>
+                  <Button
+                    size="sm"
+                    variant="outline-secondary"
+                    onClick={() => navigator.clipboard.writeText("Demo@123")}
+                  >
+                    Copy
+                  </Button>
                 </div>
-              </div>
+              </Card.Body>
+            </Card>
+          </Col>
 
-              {/* Skeleton listing grid */}
-              <Row className="g-2">
-                {[1, 2, 3].map((i) => (
-                  <Col xs={12} key={i}>
-                    <Card className="border-0">
-                      <div className="ratio ratio-16x9 bg-light rounded"></div>
-                      <Card.Body className="px-0">
-                        <Placeholder as={Card.Title} animation="wave">
-                          <Placeholder xs={6} />
-                        </Placeholder>
-                        <Placeholder as={Card.Text} animation="wave">
-                          <Placeholder xs={8} /> <Placeholder xs={4} />
-                        </Placeholder>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
+          {/* Deep Links */}
+          <Col md={4}>
+            <Card className="border-0 shadow-sm h-100">
+              <Card.Body>
+                <h6 className="fw-bold mb-3"> Jump Right In</h6>
+                <div className="d-grid gap-2">
+                  <Button
+                    as={Link}
+                    to="/login"
+                    variant="outline-danger"
+                    size="sm"
+                  >
+                    Open Admin Dashboard
+                  </Button>
+                  <Button
+                    as={Link}
+                    to="/"
+                    variant="outline-secondary"
+                    size="sm"
+                  >
+                    View Listings
+                  </Button>
+                  <Button
+                    as={Link}
+                    to="/admin/users"
+                    variant="outline-secondary"
+                    size="sm"
+                  >
+                    View Users
+                  </Button>
+                  <Button
+                    as={Link}
+                    to="/contact-us"
+                    variant="outline-secondary"
+                    size="sm"
+                  >
+                    Send a Test Enquiry
+                  </Button>
+                </div>
+                <div className="mt-3 small text-muted">
+                  Tip: Admin shows charts (listings/month, users/week) + CRUD.
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
 
-              <Button
-                variant="outline-danger"
-                href="/listings"
-                size="sm"
-                className="mt-3"
-              >
-                Try Real Filters
-              </Button>
-            </Card.Body>
-          </Card>
-        </Col>
-
-        {/* Template 2: Listing detail */}
-        <Col md={6} lg={4}>
-          <Card className="h-100 border-0 shadow-sm">
-            <Card.Header className="bg-white border-0">
-              <h5 className="fw-bold mb-0">📄 Listing Details</h5>
-            </Card.Header>
-            <Card.Body>
-              {/* Gallery placeholder */}
-              <div className="ratio ratio-16x9 bg-light rounded mb-3"></div>
-              <Placeholder as="h6" animation="wave">
-                <Placeholder xs={7} />
-              </Placeholder>
-              <div className="d-flex gap-2 mb-3">
-                <Badge bg="secondary">3 Bed</Badge>
-                <Badge bg="secondary">2 Bath</Badge>
-                <Badge bg="secondary">1 Garage</Badge>
-              </div>
-              <Placeholder as="p" animation="wave">
-                <Placeholder xs={10} /> <Placeholder xs={9} />{" "}
-                <Placeholder xs={6} />
-              </Placeholder>
-
-              <div className="d-flex gap-2">
-                <Button variant="outline-danger" href="/listings/123" size="sm">
-                  Open Sample
-                </Button>
-                <Button variant="outline-secondary" href="/listings" size="sm">
-                  More Listings
-                </Button>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-
-        {/* Template 3: Contact / Lead */}
-        <Col md={6} lg={4}>
-          <Card className="h-100 border-0 shadow-sm">
-            <Card.Header className="bg-white border-0">
-              <h5 className="fw-bold mb-0">✉️ Contact & Lead Flow</h5>
-            </Card.Header>
-            <Card.Body>
-              {/* Form mock */}
-              <div className="p-3 border rounded bg-light">
-                <Placeholder as="div" animation="wave" className="mb-2">
-                  <Placeholder xs={12} style={{ height: 36 }} />
-                </Placeholder>
-                <Placeholder as="div" animation="wave" className="mb-2">
-                  <Placeholder xs={12} style={{ height: 36 }} />
-                </Placeholder>
-                <Placeholder as="div" animation="wave" className="mb-3">
-                  <Placeholder xs={12} style={{ height: 80 }} />
-                </Placeholder>
-                <Button variant="secondary" size="sm" disabled>
-                  Send
-                </Button>
-              </div>
-
-              <p className="text-muted mt-3 mb-2">
-                Validated inquiries are securely stored and sent to
-                owners/agents.
-              </p>
-              <Button variant="outline-danger" href="/contact" size="sm">
-                Send a Test Enquiry
-              </Button>
-            </Card.Body>
-          </Card>
-        </Col>
-
-        {/* Admin */}
-        <Col md={6}>
-          <Card className="h-100 border-0 shadow-sm">
-            <Card.Header className="bg-white border-0">
-              <h5 className="fw-bold mb-0">🛠 Admin Dashboard</h5>
-            </Card.Header>
-            <Card.Body>
-              {/* Admin cards skeleton */}
-              <Row className="g-3">
-                {[1, 2, 3, 4].map((i) => (
-                  <Col xs={6} key={i}>
-                    <Card className="border-0">
-                      <div className="ratio ratio-4x3 bg-light rounded"></div>
-                      <Card.Body className="px-0">
-                        <Placeholder as={Card.Title} animation="wave">
-                          <Placeholder xs={6} />
-                        </Placeholder>
-                        <Placeholder as={Card.Text} animation="wave">
-                          <Placeholder xs={8} />
-                        </Placeholder>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-
-              <div className="d-flex gap-2 mt-3">
-                <Button variant="outline-danger" href="/admin" size="sm">
-                  Open Admin
-                </Button>
-                <Button variant="outline-secondary" href="/login" size="sm">
-                  Admin Login
-                </Button>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-
-        {/* Auth */}
-        <Col md={6}>
-          <Card className="h-100 border-0 shadow-sm">
-            <Card.Header className="bg-white border-0">
-              <h5 className="fw-bold mb-0">🔐 Authentication</h5>
-            </Card.Header>
-            <Card.Body>
-              <ul className="text-muted mb-3">
-                <li>JWT auth with HttpOnly cookies</li>
-                <li>Protected routes and roles (admin/user)</li>
-                <li>Form validation and error handling</li>
-              </ul>
-              <div className="d-flex gap-2">
-                <Button variant="outline-danger" href="/signup" size="sm">
-                  Create Account
-                </Button>
-                <Button variant="outline-secondary" href="/login" size="sm">
-                  Login
-                </Button>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+          {/* Reviewer Checklist */}
+          <Col md={4}>
+            <Card className="border-0 shadow-sm h-100">
+              <Card.Body>
+                <h6 className="fw-bold mb-3">Reviewer Checklist (1–2 min)</h6>
+                <ul className="mb-3 small">
+                  <li>
+                    Login as <strong>Demo</strong> → view charts/listings/users
+                  </li>
+                  <li>
+                    Use filters on <strong>Listings</strong> → open a details
+                    page
+                  </li>
+                  <li>
+                    <strong>Create</strong> a listing → check validation &
+                    toasts (only loogedin user have permission)
+                  </li>
+                  <li>
+                    Send a <strong>Contact</strong> enquiry → confirm success
+                    state
+                  </li>
+                  <li>
+                    Edit <strong>Profile</strong> → verify protected routes &
+                    JWT
+                  </li>
+                </ul>
+                <div className="d-flex flex-wrap gap-2">
+                  <Badge bg="light" text="dark">
+                    Role-based auth
+                  </Badge>
+                  <Badge bg="light" text="dark">
+                    RTK Query
+                  </Badge>
+                  <Badge bg="light" text="dark">
+                    Mongo/Mongoose
+                  </Badge>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </div>
     </Container>
   );
 };

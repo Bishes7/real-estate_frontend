@@ -59,9 +59,9 @@ const Login = () => {
           </Form.Group>
 
           <Button
-            variant="danger"
+            variant="primary"
             type="submit"
-            className="w-100"
+            className="w-100 my-3"
             disabled={isLoading}
           >
             Login

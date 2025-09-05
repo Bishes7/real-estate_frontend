@@ -26,6 +26,13 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
+    deleteAccount: builder.mutation({
+      query: () => ({
+        url: `${AUTH_URL}/delete-account`,
+        method: "DELETE",
+      }),
+    }),
+
     demoLogin: builder.mutation({
       query: () => ({
         url: `${AUTH_URL}/demo-login`,
@@ -65,4 +72,5 @@ export const {
   useUploadImageMutation,
   useUserListingsQuery,
   useDemoLoginMutation,
+  useDeleteAccountMutation,
 } = usersApiSlice;

@@ -176,9 +176,10 @@ const Header = () => {
                     </NavDropdown>
                   )}
 
-                <Nav.Link as={Link} to="/profile">
-                  Profile
-                </Nav.Link>
+                {!userInfo?.isDemo && (
+                  <Nav.Link href="/profile">Profile</Nav.Link>
+                )}
+
                 <Nav.Link as={Link} to="/login" onClick={handleLogout}>
                   Logout
                 </Nav.Link>

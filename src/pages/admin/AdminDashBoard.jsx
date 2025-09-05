@@ -19,7 +19,7 @@ const AdminDashboard = () => {
         <h4 className="fw-bold">Admin Dashboard</h4>
         <p className="text-muted mb-0">Key insights of your platform</p>
       </div>
-      <Row className="g-4">
+      <Row className="g-4 board">
         <Col md={4}>
           <PieChartComponent data={stats?.listingsByType} />
         </Col>
