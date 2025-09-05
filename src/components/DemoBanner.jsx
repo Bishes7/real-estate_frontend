@@ -8,8 +8,10 @@ export const DemoBanner = () => {
   if (!userInfo?.isDemo) return null;
   return (
     <Alert variant="info" className="text-center mb-0">
-      You are logged in as a <strong>Demo User</strong>
-      Actions are disabled
+      <p>
+        You are logged in as a <strong>Demo User</strong>
+      </p>
+      <b>Actions are disabled</b>
     </Alert>
   );
 };
