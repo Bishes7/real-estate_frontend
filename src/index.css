@@ -1,5 +1,5 @@
 body {
-  background-color: rgb(241, 245, 241) !important;
+  background-color: rgba(241, 245, 241, 0.623) !important;
 }
 .nav-link img {
   transform: scale(1.8);
