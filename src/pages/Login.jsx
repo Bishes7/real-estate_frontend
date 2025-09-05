@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { setCredentials } from "../slices/authSlice";
 import { useDispatch } from "react-redux";
+import DemoLoginButton from "../components/DemoLoginButton";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -65,6 +66,7 @@ const Login = () => {
           >
             Login
           </Button>
+          <DemoLoginButton />
           {isLoading && <Loader />}
         </Form>
         <Row className="py-3">

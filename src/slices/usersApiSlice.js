@@ -26,6 +26,13 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
+    demoLogin: builder.mutation({
+      query: () => ({
+        url: `${AUTH_URL}/demo-login`,
+        method: "POST",
+      }),
+    }),
+
     updateProfile: builder.mutation({
       query: (data) => ({
         url: `${USERS_URL}/update-profile`,
@@ -57,4 +64,5 @@ export const {
   useUpdateProfileMutation,
   useUploadImageMutation,
   useUserListingsQuery,
+  useDemoLoginMutation,
 } = usersApiSlice;

@@ -23,12 +23,15 @@ import ManageListings from "./pages/admin/ManageListings";
 import ContactPage from "./pages/ContactPage";
 import EditListtingPage from "./pages/admin/EditListtingPage";
 import CheckQueryPage from "./pages/admin/CheckQueryPage";
+import DemoPage from "./pages/DemoPage";
+import { DemoBanner } from "./components/DemoBanner";
 
 const App = () => {
   return (
     <>
       <BrowserRouter>
         <Chatbot />
+        <DemoBanner />
         <Header />
         <Routes>
           {/* Public routes */}
@@ -39,6 +42,7 @@ const App = () => {
           <Route path="/listing/:listingId" element={<PropertyLandingPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/contact-us" element={<ContactPage />} />
+          <Route path="/demo" element={<DemoPage />} />
 
           {/* Private (logged-in) routes */}
           <Route element={<PrivateRoute />}>
