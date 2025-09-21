@@ -58,7 +58,7 @@ const Home = () => {
                   display: "block",
                 }}
               />
-              console.log("Image src:", `${BASE_URL}${listing.images[0]}`);
+
               <Card.Body>
                 <Card.Title>{listing.name}</Card.Title>
                 <Card.Text>
