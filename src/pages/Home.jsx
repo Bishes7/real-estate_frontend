@@ -43,12 +43,22 @@ const Home = () => {
                 variant="top"
                 src={
                   listing.images && listing.images.length > 0
-                    ? `${BASE_URL}${listing.images[0]}`
+                    ? `${BASE_URL}${
+                        listing.images[0].startsWith("/")
+                          ? listing.images[0]
+                          : "/" + listing.images[0]
+                      }`
                     : "/default-image.jpg"
                 }
                 alt={listing.name}
-                style={{ height: "200px", objectFit: "cover" }}
+                style={{
+                  width: "100%",
+                  height: "200px",
+                  objectFit: "cover",
+                  display: "block",
+                }}
               />
+              console.log("Image src:", `${BASE_URL}${listing.images[0]}`);
               <Card.Body>
                 <Card.Title>{listing.name}</Card.Title>
                 <Card.Text>
