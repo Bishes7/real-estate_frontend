@@ -43,6 +43,20 @@ export const listingApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+
+    getPopular: builder.query({
+      query: (limit = 6) => ({
+        url: `${LISTING_URL}/popular?limit=${limit}`,
+        method: "GET",
+      }),
+    }),
+
+    getSimilar: builder.query({
+      query: (id) => ({
+        url: `${LISTING_URL}/similar/${id}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -52,4 +66,6 @@ export const {
   useSearchListingsQuery,
   useGetListingsQuery,
   useUpdateListingMutation,
+  useGetPopularQuery,
+  useGetSimilarQuery,
 } = listingApiSlice;

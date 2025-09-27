@@ -4,11 +4,12 @@ import { toast } from "react-toastify";
 import { Message } from "./ui/Message";
 import { useContactMessageMutation } from "../slices/contactApiSlice";
 
-const ContactModal = ({ show, handleClose, listingId }) => {
+const ContactModal = ({ show, handleClose, listingId, listingName }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
+    subject: `Inquiry about ${listingName || "property"}`,
   });
 
   const [contactMessage, { isLoading, error }] = useContactMessageMutation();
@@ -23,7 +24,7 @@ const ContactModal = ({ show, handleClose, listingId }) => {
     try {
       await contactMessage({ listingId, ...formData }).unwrap();
       toast.success("Your message has been sent");
-      setFormData({ name: "", email: "", message: "" });
+      setFormData({ name: "", email: "", message: "", subject: `Inquiry about ${listingName || "property"}` });
       handleClose();
     } catch (err) {
       toast.error(err?.data?.message);
@@ -52,6 +53,16 @@ const ContactModal = ({ show, handleClose, listingId }) => {
               name="email"
               type="email"
               value={formData.email}
+              onChange={handleOnChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Subject</Form.Label>
+            <Form.Control
+              name="subject"
+              type="text"
+              value={formData.subject}
               onChange={handleOnChange}
               required
             />

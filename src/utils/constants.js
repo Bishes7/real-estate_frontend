@@ -7,3 +7,5 @@ export const LISTING_URL = "/api/listing";
 export const CONTACT_URL = "/api/contact";
 export const ADMIN_URL = "/api/admin";
 export const BOT_URL = "/api/chatbot";
+export const BOOKINGS_URL = "/api/bookings";
+export const NOTIFICATIONS_URL = "/api/notifications";

@@ -12,6 +12,11 @@ import ListingPage from "./pages/ListingPage";
 import PropertyLandingPage from "./pages/PropertyLandingPage";
 import Chatbot from "./components/ui/ChatBot";
 import SearchPage from "./pages/SearchPage";
+import Favorites from "./pages/Favorites";
+import MyBookings from "./pages/MyBookings";
+import PropertyValuation from "./pages/PropertyValuation";
+import MarketTrends from "./pages/MarketTrends";
+import SmartRecommendations from "./pages/SmartRecommendations";
 
 import AdminRoute from "./components/admin/AdminRoute";
 import AdminLayout from "./pages/admin/AdminLayoutPage";
@@ -19,6 +24,8 @@ import AdminDashBoard from "./pages/admin/AdminDashBoard";
 
 import ManageUsers from "./pages/admin/ManageUsers";
 import ManageListings from "./pages/admin/ManageListings";
+import ManageBookings from "./pages/admin/ManageBookings";
+import AnalyticsDashboard from "./pages/admin/AnalyticsDashboard";
 
 import ContactPage from "./pages/ContactPage";
 import EditListtingPage from "./pages/admin/EditListtingPage";
@@ -48,6 +55,11 @@ const App = () => {
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/create-listing" element={<ListingPage />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/bookings" element={<MyBookings />} />
+            <Route path="/valuation" element={<PropertyValuation />} />
+            <Route path="/market-trends" element={<MarketTrends />} />
+            <Route path="/recommendations" element={<SmartRecommendations />} />
           </Route>
 
           {/* Admin-only routes */}
@@ -65,6 +77,22 @@ const App = () => {
               element={
                 <AdminLayout>
                   <ManageListings />
+                </AdminLayout>
+              }
+            />
+            <Route
+              path="/admin/bookings"
+              element={
+                <AdminLayout>
+                  <ManageBookings />
+                </AdminLayout>
+              }
+            />
+            <Route
+              path="/admin/analytics"
+              element={
+                <AdminLayout>
+                  <AnalyticsDashboard />
                 </AdminLayout>
               }
             />

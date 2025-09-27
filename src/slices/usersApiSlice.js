@@ -61,6 +61,31 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         url: `${USERS_URL}/listing/${userId}`,
       }),
     }),
+
+    addFavorite: builder.mutation({
+      query: (listingId) => ({
+        url: `${USERS_URL}/favorites/${listingId}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Listings", "User"],
+    }),
+
+    removeFavorite: builder.mutation({
+      query: (listingId) => ({
+        url: `${USERS_URL}/favorites/${listingId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Listings", "User"],
+    }),
+
+    getFavorites: builder.query({
+      query: () => ({
+        url: `${USERS_URL}/favorites`,
+      }),
+      providesTags: ["Listings", "User"],
+    }),
+
+    // (removed) saved searches
   }),
 });
 
@@ -73,4 +98,7 @@ export const {
   useUserListingsQuery,
   useDemoLoginMutation,
   useDeleteAccountMutation,
+  useAddFavoriteMutation,
+  useRemoveFavoriteMutation,
+  useGetFavoritesQuery,
 } = usersApiSlice;

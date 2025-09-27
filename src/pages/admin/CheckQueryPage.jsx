@@ -14,6 +14,28 @@ const CheckQueryPage = () => {
   const [deleteMessage] = useDeleteMessageMutation();
   const [markRead] = useMarkAsReadMutation();
 
+  // Auto-mark all unread messages as read when page loads
+  React.useEffect(() => {
+    if (messages && messages.length > 0) {
+      console.log("Messages data:", messages);
+      console.log("First message structure:", messages[0]);
+      
+      // Check if messages have status field or if they're all unread by default
+      const unreadMessages = messages.filter(msg => 
+        msg.status === 'unread' || !msg.status || msg.status === undefined
+      );
+      
+      console.log("Unread messages found:", unreadMessages.length);
+      
+      unreadMessages.forEach(msg => {
+        console.log("Marking message as read:", msg._id);
+        markRead(msg._id).catch(err => {
+          console.error("Error marking message as read:", err);
+        });
+      });
+    }
+  }, [messages, markRead]);
+
   if (isLoading) return <Loader />;
   if (error) return <Message variant="danger">{error}</Message>;
 
@@ -23,26 +45,11 @@ const CheckQueryPage = () => {
         await deleteMessage(id).unwrap();
         toast.success("Message deleted");
       } catch (err) {
-        toast.err(err?.data?.message);
+        toast.error(err?.data?.message);
       }
     }
   };
 
-  //   update message status
-  const handleReply = async (id, email) => {
-    try {
-      await markRead(id).unwrap();
-      toast.info("Message marked as read");
-      refetch();
-      // Open the default mail client in a new tab/window
-      window.open(
-        `mailto:${email}?subject=Regarding%20your%20property%20enquiry`,
-        "_blank"
-      );
-    } catch (err) {
-      toast.error(err?.data?.message);
-    }
-  };
 
   return (
     <Container className="mt-3">
@@ -77,16 +84,7 @@ const CheckQueryPage = () => {
               <td>
                 <Button
                   size="sm"
-                  variant="outline-primary"
-                  href={`mailto:${msg.email}`}
-                  onClick={() => handleReply(msg._id, msg.email)}
-                >
-                  Reply
-                </Button>
-                <Button
-                  size="sm"
                   variant="outline-danger"
-                  className="ms-2"
                   onClick={() => handleDelete(msg._id)}
                 >
                   Delete

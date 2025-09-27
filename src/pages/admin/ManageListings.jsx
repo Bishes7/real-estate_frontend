@@ -3,24 +3,23 @@ import { Loader } from "../../components/ui/Loader";
 import { Message } from "../../components/ui/Message";
 import { Table, Button } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { useDeleteListingMutation } from "../../slices/listingsApiSlice";
 import {
-  useDeleteListingMutation,
-  useGetListingsQuery,
-} from "../../slices/listingsApiSlice";
+  useApproveListingMutation,
+  useRejectListingMutation,
+  useGetAllListingsAdminQuery,
+} from "../../slices/adminApiSLice";
 import { data, useNavigate } from "react-router-dom";
 
 const ManageListings = () => {
   const navigate = useNavigate();
-  const {
-    data: listings,
-    isLoading,
-    error,
-    refetch,
-  } = useGetListingsQuery({
+  const { data: listings, isLoading, error, refetch } = useGetAllListingsAdminQuery({
     limit: 50,
     startIndex: 0,
   });
   const [deleteListing] = useDeleteListingMutation();
+  const [approveListing] = useApproveListingMutation();
+  const [rejectListing] = useRejectListingMutation();
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this listing?")) {
@@ -31,6 +30,26 @@ const ManageListings = () => {
       } catch (err) {
         toast.error(err?.data?.message || "Failed to delete listing");
       }
+    }
+  };
+
+  const handleApprove = async (id) => {
+    try {
+      await approveListing(id).unwrap();
+      toast.success("Listing approved");
+      refetch();
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to approve");
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      await rejectListing(id).unwrap();
+      toast.success("Listing rejected");
+      refetch();
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to reject");
     }
   };
 
@@ -48,6 +67,7 @@ const ManageListings = () => {
             <th>Name</th>
             <th>Type</th>
             <th>Price</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -67,6 +87,19 @@ const ManageListings = () => {
               </td>
               <td>${listing.regularPrice}</td>
               <td>
+                <span
+                  className={`badge ${
+                    listing.status === "approved"
+                      ? "bg-success"
+                      : listing.status === "rejected"
+                      ? "bg-danger"
+                      : "bg-warning text-dark"
+                  }`}
+                >
+                  {listing.status}
+                </span>
+              </td>
+              <td>
                 <Button
                   variant="secondary"
                   size="sm"
@@ -77,6 +110,24 @@ const ManageListings = () => {
                 >
                   {" "}
                   <i className="bi bi-pencil"></i> Edit
+                </Button>
+                <Button
+                  variant="success"
+                  size="sm"
+                  className="me-2"
+                  onClick={() => handleApprove(listing._id)}
+                  disabled={listing.status === "approved"}
+                >
+                  Approve
+                </Button>
+                <Button
+                  variant="warning"
+                  size="sm"
+                  className="me-2"
+                  onClick={() => handleReject(listing._id)}
+                  disabled={listing.status === "rejected"}
+                >
+                  Reject
                 </Button>
                 <Button
                   variant="danger"

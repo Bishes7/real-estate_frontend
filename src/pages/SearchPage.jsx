@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { useSearchListingsQuery } from "../slices/listingsApiSlice";
 import { Loader } from "../components/ui/Loader";
 import { Message } from "../components/ui/Message";
 import { BASE_URL } from "../utils/constants";
+import {
+  useAddFavoriteMutation,
+  useGetFavoritesQuery,
+  useRemoveFavoriteMutation,
+} from "../slices/usersApiSlice";
 
 const SearchPage = () => {
   const [search, setSearch] = useState("");
@@ -33,6 +38,7 @@ const SearchPage = () => {
     price_low: { sort: "regularPrice", order: "asc" },
   };
 
+
   const handleOnSubmit = (e) => {
     e.preventDefault();
     const { sort, order } = mapSort[filters.sort];
@@ -46,6 +52,32 @@ const SearchPage = () => {
       sort,
       order,
     });
+  };
+
+  // favorites hooks
+  const { data: favoritesData } = useGetFavoritesQuery(undefined, {
+    skip: false,
+  });
+  const [addFavorite] = useAddFavoriteMutation();
+  const [removeFavorite] = useRemoveFavoriteMutation();
+
+  const favoriteIds = useMemo(
+    () => new Set((favoritesData || []).map((f) => (f._id ? f._id : f))),
+    [favoritesData]
+  );
+
+  const isFav = (id) => favoriteIds.has(id);
+
+  const toggleFavorite = async (listingId) => {
+    try {
+      if (isFav(listingId)) {
+        await removeFavorite(listingId).unwrap();
+      } else {
+        await addFavorite(listingId).unwrap();
+      }
+    } catch (err) {
+      console.error("Favorite toggle failed", err);
+    }
   };
 
   return (
@@ -154,7 +186,11 @@ const SearchPage = () => {
       <Col md={9}>
         <h4 className="mb-4 text-center">Listing Results</h4>
         {isLoading && <Loader />}
-        {error && <Message variant="danger">{error}</Message>}
+        {error && (
+          <Message variant="danger">
+            {error?.data?.message || error?.error || "Failed to load listings"}
+          </Message>
+        )}
 
         <Row>
           {listings && listings.length > 0
@@ -175,9 +211,19 @@ const SearchPage = () => {
                       <Card.Title className="fw-bold">
                         {listing.name}
                       </Card.Title>
-                      <Card.Text className="text-muted mb-2">
-                        {listing.address}
-                      </Card.Text>
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <Card.Text className="text-muted mb-0">
+                          {listing.address}
+                        </Card.Text>
+                        <Button
+                          variant={isFav(listing._id) ? "danger" : "outline-danger"}
+                          size="sm"
+                          onClick={() => toggleFavorite(listing._id)}
+                          aria-label="Toggle favorite"
+                        >
+                          {isFav(listing._id) ? "♥" : "♡"}
+                        </Button>
+                      </div>
                       <Card.Text>
                         {listing.offer && listing.discountedPrice > 0
                           ? listing.discountedPrice

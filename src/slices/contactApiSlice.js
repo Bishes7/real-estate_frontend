@@ -9,6 +9,7 @@ export const contactMessageSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Messages"],
     }),
 
     getMessage: builder.query({
@@ -20,8 +21,8 @@ export const contactMessageSlice = apiSlice.injectEndpoints({
     }),
 
     deleteMessage: builder.mutation({
-      query: (userId) => ({
-        url: `${CONTACT_URL}/${userId}`,
+      query: (id) => ({
+        url: `${CONTACT_URL}/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Messages"],
@@ -29,9 +30,10 @@ export const contactMessageSlice = apiSlice.injectEndpoints({
 
     markAsRead: builder.mutation({
       query: (id) => ({
-        url: `${CONTACT_URL}/${id}/read`,
+        url: `${CONTACT_URL}/${id}/mark-read`,
         method: "PUT",
       }),
+      invalidatesTags: ["Messages"],
     }),
   }),
 });

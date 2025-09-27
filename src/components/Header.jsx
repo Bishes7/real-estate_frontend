@@ -16,6 +16,7 @@ import { logout } from "../slices/authSlice";
 import { useSearchListingsQuery } from "../slices/listingsApiSlice";
 import { Message } from "./ui/Message";
 import { Loader } from "./ui/Loader";
+// import NotificationBell from "./NotificationBell";
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -177,7 +178,15 @@ const Header = () => {
                   )}
 
                 {!userInfo?.isDemo && (
-                  <Nav.Link href="/profile">Profile</Nav.Link>
+                  <>
+                    <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
+                    {userInfo?.user?.role !== "admin" && (
+                      <>
+                        <Nav.Link as={Link} to="/favorites">Favorites</Nav.Link>
+                        <Nav.Link as={Link} to="/bookings">My Bookings</Nav.Link>
+                      </>
+                    )}
+                  </>
                 )}
 
                 <Nav.Link as={Link} to="/login" onClick={handleLogout}>
